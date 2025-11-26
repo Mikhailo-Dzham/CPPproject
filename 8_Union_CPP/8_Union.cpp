@@ -15,8 +15,8 @@ struct ToCartesianVisitor {
     struct Coords { double x, y; };
 
     Coords operator()(const Cart2D& c) const { return {c.x, c.y}; }
-    Coords operator()(const Polar2D& p) const { 
-        return {p.r * std::cos(p.angle), p.r * std::sin(p.angle)}; 
+    Coords operator()(const Polar2D& p) const {
+        return {p.r * std::cos(p.angle), p.r * std::sin(p.angle)};
     }
 };
 
