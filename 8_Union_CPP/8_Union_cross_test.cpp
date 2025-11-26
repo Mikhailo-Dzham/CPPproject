@@ -68,18 +68,34 @@ void test_task_3_vectors() {
     std::cout << "[TEST] Task 3: Vectors... ";
 
     // Вектор 1: Координати (1, 1)
-    Vector v1_c; v1_c.type = VECTOR_COORDS; v1_c.data.coord.x = 1; v1_c.data.coord.y = 1;
+    Vector v1_c;
+    v1_c.type = VECTOR_COORDS;
+    v1_c.data.coord.x = 1;
+    v1_c.data.coord.y = 1;
+
     Vector_CPP v1_cpp = VectorCoords{1.0, 1.0};
 
-    // Вектор 2: Точки (0,0) -> (2,2) (Колінеарний першому)
-    Point2D p_start = { .type=COORD_CARTESIAN, .data.cart={0,0} };
-    Point2D p_end   = { .type=COORD_CARTESIAN, .data.cart={2,2} };
-    Vector v2_c; v2_c.type = VECTOR_POINTS; v2_c.data.pts.start = p_start; v2_c.data.pts.end = p_end;
+    // Вектор 2: Точки (0,0) -> (2,2)
+    // --- ВИПРАВЛЕННЯ ТУТ ---
+    Point2D p_start;
+    p_start.type = COORD_CARTESIAN;
+    p_start.data.cart.x = 0;
+    p_start.data.cart.y = 0;
+
+    Point2D p_end;
+    p_end.type = COORD_CARTESIAN;
+    p_end.data.cart.x = 2;
+    p_end.data.cart.y = 2;
+    // -----------------------
+
+    Vector v2_c;
+    v2_c.type = VECTOR_POINTS;
+    v2_c.data.pts.start = p_start;
+    v2_c.data.pts.end = p_end;
 
     Vector_CPP v2_cpp = VectorPoints{ Cart2D{0,0}, Cart2D{2,2} };
 
     // Перевірка
-    // Для C функції треба 3 вектори (за умовою), дамо третій теж (1,1)
     bool res_c = are_collinear_C(v1_c, v2_c, v1_c);
     bool res_cpp = are_collinear_CPP(v1_cpp, v2_cpp);
 
