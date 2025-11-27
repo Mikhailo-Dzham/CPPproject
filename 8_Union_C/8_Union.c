@@ -31,6 +31,28 @@ double calculate_segment_length_C(Point2D p1, Point2D p2) {
     return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
+void save_point2d(FILE *f, Point2D p) {
+    fprintf(f, "%d ", p.type); // 1. Пишемо тип
+    if (p.type == COORD_CARTESIAN) {
+        fprintf(f, "%lf %lf\n", p.data.cart.x, p.data.cart.y);
+    } else {
+        fprintf(f, "%lf %lf\n", p.data.polar.r, p.data.polar.angle);
+    }
+}
+
+int load_point2d(FILE *f, Point2D *p) {
+    int type_int;
+    if (fscanf(f, "%d", &type_int) != 1) return 0; // Помилка читання
+
+    p->type = (Point2DType)type_int;
+    if (p->type == COORD_CARTESIAN) {
+        if (fscanf(f, "%lf %lf", &p->data.cart.x, &p->data.cart.y) != 2) return 0;
+    } else {
+        if (fscanf(f, "%lf %lf", &p->data.polar.r, &p->data.polar.angle) != 2) return 0;
+    }
+    return 1;
+}
+
 // ==========================
 // ЗАДАЧА 5: Фігури
 // ==========================
@@ -86,6 +108,32 @@ double calculate_area_C(Shape s) {
     }
 }
 
+void save_shape(FILE *f, Shape s) {
+    fprintf(f, "%d ", s.type);
+    switch (s.type) {
+    case SHAPE_CIRCLE: fprintf(f, "%lf\n", s.data.circle_radius); break;
+    case SHAPE_SQUARE: fprintf(f, "%lf\n", s.data.square_side); break;
+    case SHAPE_TRIANGLE: fprintf(f, "%lf %lf %lf\n", s.data.triangle_sides.a, s.data.triangle_sides.b, s.data.triangle_sides.c); break;
+    case SHAPE_RECT: fprintf(f, "%lf %lf\n", s.data.rect_sides.a, s.data.rect_sides.b); break;
+    case SHAPE_TRAPEZOID: fprintf(f, "%lf %lf %lf\n", s.data.trapezoid_dims.a, s.data.trapezoid_dims.b, s.data.trapezoid_dims.h); break;
+    }
+}
+
+int load_shape(FILE *f, Shape *s) {
+    int type_int;
+    if (fscanf(f, "%d", &type_int) != 1) return 0;
+    s->type = (ShapeType)type_int;
+
+    switch (s->type) {
+    case SHAPE_CIRCLE: return fscanf(f, "%lf", &s->data.circle_radius) == 1;
+    case SHAPE_SQUARE: return fscanf(f, "%lf", &s->data.square_side) == 1;
+    case SHAPE_TRIANGLE: return fscanf(f, "%lf %lf %lf", &s->data.triangle_sides.a, &s->data.triangle_sides.b, &s->data.triangle_sides.c) == 3;
+    case SHAPE_RECT: return fscanf(f, "%lf %lf", &s->data.rect_sides.a, &s->data.rect_sides.b) == 2;
+    case SHAPE_TRAPEZOID: return fscanf(f, "%lf %lf %lf", &s->data.trapezoid_dims.a, &s->data.trapezoid_dims.b, &s->data.trapezoid_dims.h) == 3;
+    }
+    return 0;
+}
+
 // ==========================
 // ЗАДАЧА 2: Гроші
 // ==========================
@@ -98,6 +146,28 @@ void print_money_C(Money m) {
         int kop = m.data.only_kop % 100;
         printf("%d UAH %02d kop (from %d total)\n", grn, kop, m.data.only_kop);
     }
+}
+
+void save_money(FILE *f, Money m) {
+    fprintf(f, "%d ", m.type);
+    if (m.type == MONEY_FULL) {
+        fprintf(f, "%d %d\n", m.data.full.grn, m.data.full.kop);
+    } else {
+        fprintf(f, "%d\n", m.data.only_kop);
+    }
+}
+
+int load_money(FILE *f, Money *m) {
+    int type_int;
+    if (fscanf(f, "%d", &type_int) != 1) return 0;
+    m->type = (MoneyType)type_int;
+
+    if (m->type == MONEY_FULL) {
+        if (fscanf(f, "%d %d", &m->data.full.grn, &m->data.full.kop) != 2) return 0;
+    } else {
+        if (fscanf(f, "%d", &m->data.only_kop) != 1) return 0;
+    }
+    return 1;
 }
 
 // ==========================
@@ -113,10 +183,7 @@ static void get_vector_components(Vector v, double *vx, double *vy) {
         // Використовуємо функцію to_cartesian з Задачі 1 (вона має бути вище у файлі)
         // Оскільки to_cartesian static, ми можемо її викликати тут
         // Але! В C "static" функції видно тільки в цьому файлі.
-        // Я припускаю, що to_cartesian вже є вище.
 
-        // *Якщо to_cartesian немає в хедері, ми дублюємо логіку або робимо її доступною*
-        // Для спрощення продублюємо тут перетворення точок:
         double x1, y1, x2, y2;
 
         // Start point
@@ -158,6 +225,31 @@ int are_collinear_C(Vector v1, Vector v2, Vector v3) {
     return (fabs(det12) < eps) && (fabs(det23) < eps);
 }
 
+void save_vector(FILE *f, Vector v) {
+    fprintf(f, "%d ", v.type);
+    if (v.type == VECTOR_COORDS) {
+        fprintf(f, "%lf %lf\n", v.data.coord.x, v.data.coord.y);
+    } else {
+        // Тут хитро: вектор зберігає дві точки. Рекурсивно викликаємо save_point2d
+        save_point2d(f, v.data.pts.start);
+        save_point2d(f, v.data.pts.end);
+    }
+}
+
+int load_vector(FILE *f, Vector *v) {
+    int type_int;
+    if (fscanf(f, "%d", &type_int) != 1) return 0;
+    v->type = (VectorType)type_int;
+
+    if (v->type == VECTOR_COORDS) {
+        if (fscanf(f, "%lf %lf", &v->data.coord.x, &v->data.coord.y) != 2) return 0;
+    } else {
+        if (!load_point2d(f, &v->data.pts.start)) return 0;
+        if (!load_point2d(f, &v->data.pts.end)) return 0;
+    }
+    return 1;
+}
+
 // ==========================
 // ЗАДАЧА 4: Точки 3D
 // ==========================
@@ -189,6 +281,28 @@ double calculate_distance_3d_C(Point3D p1, Point3D p2) {
     return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2) + pow(z2 - z1, 2));
 }
 
+void save_point3d(FILE *f, Point3D p) {
+    fprintf(f, "%d ", p.type);
+    switch (p.type) {
+    case SPACE_CART: fprintf(f, "%lf %lf %lf\n", p.data.cart.x, p.data.cart.y, p.data.cart.z); break;
+    case SPACE_POLAR: fprintf(f, "%lf %lf %lf\n", p.data.polar.r, p.data.polar.angle, p.data.polar.z); break;
+    case SPACE_SPHERICAL: fprintf(f, "%lf %lf %lf\n", p.data.sphere.r, p.data.sphere.theta, p.data.sphere.phi); break;
+    }
+}
+
+int load_point3d(FILE *f, Point3D *p) {
+    int type_int;
+    if (fscanf(f, "%d", &type_int) != 1) return 0;
+    p->type = (SpaceType)type_int;
+
+    switch (p->type) {
+    case SPACE_CART: return fscanf(f, "%lf %lf %lf", &p->data.cart.x, &p->data.cart.y, &p->data.cart.z) == 3;
+    case SPACE_POLAR: return fscanf(f, "%lf %lf %lf", &p->data.polar.r, &p->data.polar.angle, &p->data.polar.z) == 3;
+    case SPACE_SPHERICAL: return fscanf(f, "%lf %lf %lf", &p->data.sphere.r, &p->data.sphere.theta, &p->data.sphere.phi) == 3;
+    }
+    return 0;
+}
+
 // ==========================
 // ЗАДАЧА 6: Числа (Ділення)
 // ==========================
@@ -217,4 +331,21 @@ AnyNumber divide_numbers_C(AnyNumber n1, AnyNumber n2) {
         res.data.d_val = val1 / val2;
     }
     return res;
+}
+
+void save_number(FILE *f, AnyNumber n) {
+    fprintf(f, "%d ", n.type);
+    if (n.type == NUM_INT) fprintf(f, "%d\n", n.data.i_val);
+    else if (n.type == NUM_DOUBLE) fprintf(f, "%lf\n", n.data.d_val);
+    else fprintf(f, "0\n"); // Для INF/NAN записуємо пустишку
+}
+
+int load_number(FILE *f, AnyNumber *n) {
+    int type_int;
+    if (fscanf(f, "%d", &type_int) != 1) return 0;
+    n->type = (AnyNumType)type_int;
+
+    if (n->type == NUM_INT) return fscanf(f, "%d", &n->data.i_val) == 1;
+    else if (n->type == NUM_DOUBLE) return fscanf(f, "%lf", &n->data.d_val) == 1;
+    else { int dummy; fscanf(f, "%d", &dummy); return 1; } // Пропускаємо пустишку
 }

@@ -3,6 +3,7 @@
 #include <cmath>
 #include "../8_Union_C/8_Union.h"  // C-headers
 #include "8_Union.h"               // C++ headers
+#include <chrono> // Для заміру часу в C++
 
 // Функція для порівняння double
 bool is_equal(double a, double b) {
@@ -144,6 +145,47 @@ void test_task_6_numbers() {
     else std::cout << "FAIL" << std::endl;
 }
 
+void run_benchmark() {
+    std::cout << "\n=== BENCHMARK START (10,000,000 iterations) ===" << std::endl;
+    long long iterations = 10000000;
+
+    // --- C Benchmark ---
+    Point2D p1_c, p2_c;
+    p1_c.type = COORD_CARTESIAN; p1_c.data.cart = {0.0, 0.0};
+    p2_c.type = COORD_POLAR;     p2_c.data.polar = {100.0, 0.785};
+
+    auto start_c = std::chrono::high_resolution_clock::now();
+    volatile double dummy_c = 0; // volatile щоб компілятор не викинув цикл
+    for(int i=0; i<iterations; ++i) {
+        dummy_c += calculate_segment_length_C(p1_c, p2_c);
+    }
+    auto end_c = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> diff_c = end_c - start_c;
+
+    std::cout << "C (Union) time:   " << diff_c.count() << " s" << std::endl;
+
+    // --- C++ Benchmark ---
+    Point2D_CPP p1_cpp = Cart2D{0.0, 0.0};
+    Point2D_CPP p2_cpp = Polar2D{100.0, 0.785};
+
+    auto start_cpp = std::chrono::high_resolution_clock::now();
+    volatile double dummy_cpp = 0;
+    for(int i=0; i<iterations; ++i) {
+        dummy_cpp += calculate_segment_length_CPP(p1_cpp, p2_cpp);
+    }
+    auto end_cpp = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> diff_cpp = end_cpp - start_cpp;
+
+    std::cout << "C++ (Variant) time: " << diff_cpp.count() << " s" << std::endl;
+
+    if (diff_c.count() < diff_cpp.count())
+        std::cout << "Result: C is faster by " << (diff_cpp.count() - diff_c.count()) << " s" << std::endl;
+    else
+        std::cout << "Result: C++ is faster (optimization magic!)" << std::endl;
+
+    std::cout << "=== BENCHMARK END ===" << std::endl;
+}
+
 int main() {
     std::cout << "=== CROSS TEST START ===" << std::endl;
     test_task_1_points(); // (Вже є)
@@ -152,5 +194,6 @@ int main() {
     test_task_5_shapes(); // (Вже є)
     test_task_6_numbers();
     std::cout << "=== CROSS TEST END ===" << std::endl;
+    run_benchmark();
     return 0;
 }
