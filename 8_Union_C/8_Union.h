@@ -115,6 +115,14 @@ AnyNumber divide_numbers_C(AnyNumber n1, AnyNumber n2);
 void save_number(FILE *f, AnyNumber n);
 int load_number(FILE *f, AnyNumber *n);
 
+// --- Додаємо нові прототипи для консольного вводу ---
+Point2D input_point2d_console();
+Money   input_money_console();
+Vector  input_vector_console();
+Point3D input_point3d_console();
+Shape   input_shape_console();
+AnyNumber input_number_console();
+
 #ifdef __cplusplus
 }
 #endif

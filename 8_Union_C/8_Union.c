@@ -349,3 +349,104 @@ int load_number(FILE *f, AnyNumber *n) {
     else if (n->type == NUM_DOUBLE) return fscanf(f, "%lf", &n->data.d_val) == 1;
     else { int dummy; fscanf(f, "%d", &dummy); return 1; } // Пропускаємо пустишку
 }
+
+// === ІНТЕРАКТИВНИЙ ВВІД ===
+
+Point2D input_point2d_console() {
+    Point2D p;
+    int type;
+    printf("  Select Point Type (0: Cartesian, 1: Polar): ");
+    scanf("%d", &type);
+    p.type = (Point2DType)type;
+    if (p.type == COORD_CARTESIAN) {
+        printf("  Enter X Y: ");
+        scanf("%lf %lf", &p.data.cart.x, &p.data.cart.y);
+    } else {
+        printf("  Enter R Angle: ");
+        scanf("%lf %lf", &p.data.polar.r, &p.data.polar.angle);
+    }
+    return p;
+}
+
+Money input_money_console() {
+    Money m;
+    int type;
+    printf("  Select Money Type (0: Full, 1: Kop Only): ");
+    scanf("%d", &type);
+    m.type = (MoneyType)type;
+    if (m.type == MONEY_FULL) {
+        printf("  Enter UAH KOP: ");
+        scanf("%d %d", &m.data.full.grn, &m.data.full.kop);
+    } else {
+        printf("  Enter Total Kopecks: ");
+        scanf("%d", &m.data.only_kop);
+    }
+    return m;
+}
+
+Vector input_vector_console() {
+    Vector v;
+    int type;
+    printf("  Select Vector Type (0: Coords, 1: Points): ");
+    scanf("%d", &type);
+    v.type = (VectorType)type;
+    if (v.type == VECTOR_COORDS) {
+        printf("  Enter Vx Vy: ");
+        scanf("%lf %lf", &v.data.coord.x, &v.data.coord.y);
+    } else {
+        printf("  > Start Point:\n");
+        v.data.pts.start = input_point2d_console();
+        printf("  > End Point:\n");
+        v.data.pts.end = input_point2d_console();
+    }
+    return v;
+}
+
+Point3D input_point3d_console() {
+    Point3D p;
+    int type;
+    printf("  Select 3D Type (0: Cart, 1: Polar, 2: Sphere): ");
+    scanf("%d", &type);
+    p.type = (SpaceType)type;
+    if (p.type == SPACE_CART) {
+        printf("  Enter X Y Z: ");
+        scanf("%lf %lf %lf", &p.data.cart.x, &p.data.cart.y, &p.data.cart.z);
+    } else if (p.type == SPACE_POLAR) {
+        printf("  Enter R Angle Z: ");
+        scanf("%lf %lf %lf", &p.data.polar.r, &p.data.polar.angle, &p.data.polar.z);
+    } else {
+        printf("  Enter R Theta Phi: ");
+        scanf("%lf %lf %lf", &p.data.sphere.r, &p.data.sphere.theta, &p.data.sphere.phi);
+    }
+    return p;
+}
+
+Shape input_shape_console() {
+    Shape s;
+    int type;
+    printf("  Select Shape (0:Circle, 1:Square, 2:Triangle, 3:Rect, 4:Trapezoid): ");
+    scanf("%d", &type);
+    s.type = (ShapeType)type;
+    switch(s.type) {
+        case SHAPE_CIRCLE: printf("  Enter R: "); scanf("%lf", &s.data.circle_radius); break;
+        case SHAPE_SQUARE: printf("  Enter Side: "); scanf("%lf", &s.data.square_side); break;
+        case SHAPE_TRIANGLE: printf("  Enter A B C: "); scanf("%lf %lf %lf", &s.data.triangle_sides.a, &s.data.triangle_sides.b, &s.data.triangle_sides.c); break;
+        case SHAPE_RECT: printf("  Enter A B: "); scanf("%lf %lf", &s.data.rect_sides.a, &s.data.rect_sides.b); break;
+        case SHAPE_TRAPEZOID: printf("  Enter A B H: "); scanf("%lf %lf %lf", &s.data.trapezoid_dims.a, &s.data.trapezoid_dims.b, &s.data.trapezoid_dims.h); break;
+    }
+    return s;
+}
+
+AnyNumber input_number_console() {
+    AnyNumber n;
+    int type;
+    printf("  Select Number Type (0: Int, 1: Double): ");
+    scanf("%d", &type);
+    n.type = (AnyNumType)type;
+    if (n.type == NUM_INT) {
+        printf("  Enter Int: "); scanf("%d", &n.data.i_val);
+    } else {
+        printf("  Enter Double: "); scanf("%lf", &n.data.d_val);
+    }
+    return n;
+}
