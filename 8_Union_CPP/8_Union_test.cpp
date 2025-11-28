@@ -5,13 +5,13 @@
 #include <iomanip>
 #include "8_Union.h"
 
-// --- Helper: Очищення потоку вводу (щоб не було глюків з меню) ---
+// --- Helper: Clear input stream (to avoid menu glitches) ---
 void clear_cin() {
     std::cin.clear();
     std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 }
 
-// --- Helper: Отримання файлу для читання ---
+// --- Helper: Get input file ---
 std::ifstream get_input_file() {
     std::string fname;
     std::cout << "Enter input filename: ";
@@ -23,9 +23,9 @@ std::ifstream get_input_file() {
     return f;
 }
 
-// --- Helper: Отримання потоку для запису (або cout) ---
-// Оскільки в C++ не можна просто повернути FILE*, ми зробимо інакше:
-// Функція повертає ім'я файлу, якщо обрано файл, або порожній рядок, якщо консоль.
+// --- Helper: Get output stream (or cout) ---
+// Since in C++ we cannot simply return FILE*, we do it differently:
+// Function returns filename if file is selected, or empty string if console.
 std::string get_output_mode() {
     int choice;
     std::cout << "[OUTPUT] 1. Console  2. File\n> ";
@@ -39,7 +39,7 @@ std::string get_output_mode() {
     return ""; // Empty string = Console
 }
 
-// --- Helper: Запис результату (тексту) у вибраний потік ---
+// --- Helper: Write result (text) to selected stream ---
 void write_result(const std::string& filename, const std::string& text) {
     if (filename.empty()) {
         std::cout << text << std::endl;
@@ -80,7 +80,7 @@ void run_task_1() {
 
     double dist = calculate_segment_length_CPP(p1, p2);
 
-    // Формуємо рядок результату
+    // Form the result string
     std::string res = "Task 1 Result: Distance = " + std::to_string(dist);
     write_result(get_output_mode(), res);
 }
@@ -103,10 +103,10 @@ void run_task_2() {
 
     std::string out_fname = get_output_mode();
     if (out_fname.empty()) {
-        print_money_CPP(m); // Виводимо в консоль нашою функцією
+        print_money_CPP(m); // Output to console using our function
     } else {
         std::ofstream f(out_fname);
-        save_money(f, m); // Зберігаємо структуру в файл
+        save_money(f, m); // Save structure to file
         f.close();
         std::cout << "[INFO] Money object dump saved to " << out_fname << std::endl;
     }

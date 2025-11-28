@@ -40,15 +40,13 @@ void run_test_case(const TestCase& tc) {
             Money_CPP m;
             if (load_money(in, m)) {
                 out << "Index: " << m.index() << "\n";
-                save_money(out, m); // Використовуємо нашу функцію save
+                save_money(out, m); // Using our save function
                 std::cout << "OK -> " << tc.output_file << std::endl;
             } else std::cout << "FAIL (Parse)" << std::endl;
             break;
         }
         case 3: {
-            Vector_CPP v1, v2; // В C++ версії перевіряємо 2 вектори (приклад)
-            // АБО 3, якщо ти змінив логіку в 8_Union.cpp на 3 вектори.
-            // Припустимо, що в 8_Union.cpp функція приймає 2 вектори are_collinear_CPP(v1, v2)
+            Vector_CPP v1, v2; // In C++ version we check 2 vectors (example)
             if (load_vector(in, v1) && load_vector(in, v2)) {
                 bool res = are_collinear_CPP(v1, v2);
                 out << "Collinear: " << (res ? "YES" : "NO") << std::endl;
@@ -94,7 +92,7 @@ int main() {
         {1, "test_t1_mixed.txt", "res_cpp_t1.txt", "Task 1: Mixed Coordinates"},
         {2, "test_t2_full.txt",  "res_cpp_t2a.txt", "Task 2: Full Money"},
         {2, "test_t2_kop.txt",   "res_cpp_t2b.txt", "Task 2: Kopecks Only"},
-        // Для векторів C++ може читати перші два вектори з файлу з трьома векторами, це ок
+        // For vectors, C++ can read the first two vectors from a file with three vectors, that's fine
         {3, "test_t3_collinear.txt", "res_cpp_t3.txt", "Task 3: Collinear Vectors"},
         {4, "test_t4_sphere.txt", "res_cpp_t4.txt", "Task 4: Spherical 3D"},
         {5, "test_t5_all.txt",    "res_cpp_t5.txt", "Task 5: Trapezoid Area"},

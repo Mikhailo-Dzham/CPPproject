@@ -1,11 +1,11 @@
 #include <iostream>
 #include <cassert>
 #include <cmath>
-#include "../8_Union_C/8_Union.h"  // C-headers
+#include "../8_Union_C/8_Union.h"  // C headers
 #include "8_Union.h"               // C++ headers
-#include <chrono> // Для заміру часу в C++
+#include <chrono> // For timing in C++
 
-// Функція для порівняння double
+// Function to compare doubles
 bool is_equal(double a, double b) {
     return std::abs(a - b) < 1e-6;
 }
@@ -13,26 +13,26 @@ bool is_equal(double a, double b) {
 void test_task_1_points() {
     std::cout << "[TEST] Task 1: Points... ";
 
-    // 1. Дані
-    double r = 10.0, ang = 0.785; // 45 градусів
+    // 1. Data
+    double r = 10.0, ang = 0.785; // 45 degrees
     double x = 5.0, y = 5.0;
 
-    // 2. Створення C об'єктів
+    // 2. Creating C objects
     Point2D c_p1;
     c_p1.type = COORD_POLAR; c_p1.data.polar.r = r; c_p1.data.polar.angle = ang;
 
     Point2D c_p2;
     c_p2.type = COORD_CARTESIAN; c_p2.data.cart.x = x; c_p2.data.cart.y = y;
 
-    // 3. Створення C++ об'єктів
+    // 3. Creating C++ objects
     Point2D_CPP cpp_p1 = Polar2D{r, ang};
     Point2D_CPP cpp_p2 = Cart2D{x, y};
 
-    // 4. Обчислення
+    // 4. Calculation
     double res_c = calculate_segment_length_C(c_p1, c_p2);
     double res_cpp = calculate_segment_length_CPP(cpp_p1, cpp_p2);
 
-    // 5. Перевірка
+    // 5. Check
     if (is_equal(res_c, res_cpp)) {
         std::cout << "OK (Val: " << res_c << ")" << std::endl;
     } else {
@@ -43,7 +43,7 @@ void test_task_1_points() {
 void test_task_5_shapes() {
     std::cout << "[TEST] Task 5: Shapes... ";
 
-    // Трикутник 3, 4, 5 (Площа має бути 6)
+    // Triangle 3, 4, 5 (Area should be 6)
 
     // C Setup
     Shape c_sh;
@@ -63,12 +63,10 @@ void test_task_5_shapes() {
     }
 }
 
-// ... (Функції test_task_1 і test_task_5 залишаємо) ...
-
 void test_task_3_vectors() {
     std::cout << "[TEST] Task 3: Vectors... ";
 
-    // Вектор 1: Координати (1, 1)
+    // Vector 1: Coordinates (1, 1)
     Vector v1_c;
     v1_c.type = VECTOR_COORDS;
     v1_c.data.coord.x = 1;
@@ -76,8 +74,8 @@ void test_task_3_vectors() {
 
     Vector_CPP v1_cpp = VectorCoords{1.0, 1.0};
 
-    // Вектор 2: Точки (0,0) -> (2,2)
-    // --- ВИПРАВЛЕННЯ ТУТ ---
+    // Vector 2: Points (0,0) -> (2,2)
+    // --- FIX HERE ---
     Point2D p_start;
     p_start.type = COORD_CARTESIAN;
     p_start.data.cart.x = 0;
@@ -96,7 +94,7 @@ void test_task_3_vectors() {
 
     Vector_CPP v2_cpp = VectorPoints{ Cart2D{0,0}, Cart2D{2,2} };
 
-    // Перевірка
+    // Check
     bool res_c = are_collinear_C(v1_c, v2_c, v1_c);
     bool res_cpp = are_collinear_CPP(v1_cpp, v2_cpp);
 
@@ -107,12 +105,12 @@ void test_task_3_vectors() {
 void test_task_4_3d() {
     std::cout << "[TEST] Task 4: 3D Points... ";
 
-    // Точка 1: Декарт (1, 0, 0)
+    // Point 1: Cartesian (1, 0, 0)
     Point3D p1_c; p1_c.type=SPACE_CART; p1_c.data.cart = {1,0,0};
     Point3D_CPP p1_cpp = Cart3D{1,0,0};
 
-    // Точка 2: Сферична (r=1, theta=PI/2, phi=PI) -> (-1, 0, 0)
-    // Відстань має бути 2.0
+    // Point 2: Spherical (r=1, theta=PI/2, phi=PI) -> (-1, 0, 0)
+    // Distance should be 2.0
     double PI = 3.1415926535;
     Point3D p2_c; p2_c.type=SPACE_SPHERICAL; p2_c.data.sphere = {1, PI/2.0, PI};
     Point3D_CPP p2_cpp = Sphere3D{1, PI/2.0, PI};
@@ -137,7 +135,7 @@ void test_task_6_numbers() {
     AnyNumber res_c = divide_numbers_C(n1, n2);
     AnyNumber_CPP res_cpp = divide_numbers_CPP(n1_cpp, n2_cpp);
 
-    // Перевіряємо, чи результат 5.0
+    // Check if result is 5.0
     double val_c = res_c.data.d_val;
     double val_cpp = std::get<double>(res_cpp);
 
@@ -155,7 +153,7 @@ void run_benchmark() {
     p2_c.type = COORD_POLAR;     p2_c.data.polar = {100.0, 0.785};
 
     auto start_c = std::chrono::high_resolution_clock::now();
-    volatile double dummy_c = 0; // volatile щоб компілятор не викинув цикл
+    volatile double dummy_c = 0; // volatile so compiler doesn't optimize away the loop
     for(int i=0; i<iterations; ++i) {
         dummy_c += calculate_segment_length_C(p1_c, p2_c);
     }
@@ -188,10 +186,10 @@ void run_benchmark() {
 
 int main() {
     std::cout << "=== CROSS TEST START ===" << std::endl;
-    test_task_1_points(); // (Вже є)
+    test_task_1_points();
     test_task_3_vectors();
     test_task_4_3d();
-    test_task_5_shapes(); // (Вже є)
+    test_task_5_shapes();
     test_task_6_numbers();
     std::cout << "=== CROSS TEST END ===" << std::endl;
     run_benchmark();

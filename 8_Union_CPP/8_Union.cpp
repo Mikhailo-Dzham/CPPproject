@@ -8,10 +8,10 @@
 #endif
 
 // ==========================
-// ЗАДАЧА 1: Точки (через std::visit)
+// TASK 1: Points (via std::visit)
 // ==========================
 
-// Допоміжна структура (Visitor), яка знає, як перетворити будь-що в пари (x, y)
+// Helper structure (Visitor) that knows how to convert anything to pairs (x, y)
 struct ToCartesianVisitor {
     struct Coords { double x, y; };
 
@@ -22,7 +22,7 @@ struct ToCartesianVisitor {
 };
 
 double calculate_segment_length_CPP(const Point2D_CPP& p1, const Point2D_CPP& p2) {
-    // std::visit автоматично вибирає потрібний метод із ToCartesianVisitor
+    // std::visit automatically selects the required method from ToCartesianVisitor
     auto c1 = std::visit(ToCartesianVisitor{}, p1);
     auto c2 = std::visit(ToCartesianVisitor{}, p2);
 
@@ -30,11 +30,11 @@ double calculate_segment_length_CPP(const Point2D_CPP& p1, const Point2D_CPP& p2
 }
 
 // ==========================
-// ЗАДАЧА 5: Фігури (через std::visit + lambda)
+// TASK 5: Shapes (via std::visit + lambda)
 // ==========================
 
-// Тут покажемо інший спосіб: std::visit з "overloaded" лямбдами
-// Це дуже потужний інструмент C++17
+// Here we show another way: std::visit with "overloaded" lambdas
+// This is a very powerful C++17 tool
 template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
@@ -66,7 +66,7 @@ double calculate_perimeter_CPP(const Shape_CPP& s) {
 }
 
 // ==========================
-// ЗАДАЧА 2: Гроші
+// TASK 2: Money
 // ==========================
 void print_money_CPP(const Money_CPP& m) {
     std::visit(overloaded {
@@ -78,19 +78,19 @@ void print_money_CPP(const Money_CPP& m) {
 }
 
 // ==========================
-// ЗАДАЧА 3: Вектори
+// TASK 3: Vectors
 // ==========================
-// Helper: Отримати пару {dx, dy} з вектора
+// Helper: Get pair {dx, dy} from vector
 struct VectorComponentVisitor {
     struct Vec2 { double x, y; };
 
-    // Якщо вектор заданий координатами
+    // If vector is defined by coordinates
     Vec2 operator()(const VectorCoords& c) const { return {c.x, c.y}; }
 
-    // Якщо вектор заданий точками (тут складно, бо точки теж Variant)
+    // If vector is defined by points (tricky here because points are also Variant)
     Vec2 operator()(const VectorPoints& pts) const {
-        // Нам треба викликати ToCartesianVisitor (з Задачі 1) для точок start і end
-        // Оскільки ToCartesianVisitor визначений в цьому файлі (вище), ми його бачимо
+        // We need to call ToCartesianVisitor (from Task 1) for start and end points
+        // Since ToCartesianVisitor is defined in this file (above), we can see it
         auto c1 = std::visit(ToCartesianVisitor{}, pts.start);
         auto c2 = std::visit(ToCartesianVisitor{}, pts.end);
         return {c2.x - c1.x, c2.y - c1.y};
@@ -108,7 +108,7 @@ bool are_collinear_CPP(const Vector_CPP& v1, const Vector_CPP& v2) {
 
 
 // ==========================
-// ЗАДАЧА 4: Точки 3D
+// TASK 4: 3D Points
 // ==========================
 struct ToCartesian3DVisitor {
     struct Coords3 { double x, y, z; };
@@ -135,7 +135,7 @@ double calculate_distance_3d_CPP(const Point3D_CPP& p1, const Point3D_CPP& p2) {
 }
 
 // ==========================
-// ЗАДАЧА 6: Числа
+// TASK 6: Numbers
 // ==========================
 AnyNumber_CPP divide_numbers_CPP(const AnyNumber_CPP& n1, const AnyNumber_CPP& n2) {
     // Helper lambda to extract double value
@@ -143,19 +143,19 @@ AnyNumber_CPP divide_numbers_CPP(const AnyNumber_CPP& n1, const AnyNumber_CPP& n
         using T = std::decay_t<decltype(val)>;
         if constexpr (std::is_same_v<T, int>) return static_cast<double>(val);
         else if constexpr (std::is_same_v<T, double>) return val;
-        else return NAN; // Для Inf/Nan повертаємо NAN, щоб сигналізувати помилку
+        else return NAN; // For Inf/Nan return NAN to signal error
     };
 
     double v1 = std::visit(get_val, n1);
     double v2 = std::visit(get_val, n2);
 
     if (std::isnan(v1) || std::isnan(v2)) return NanType{};
-    if (std::abs(v2) < 1e-9) return InfType{}; // Ділення на нуль
+    if (std::abs(v2) < 1e-9) return InfType{}; // Division by zero
 
     return v1 / v2;
 }
 
-// === ЗАДАЧА 1: Точки I/O ===
+// === TASK 1: Points I/O ===
 Point2D_CPP input_point2d_console() {
     int type;
     std::cout << "  Type (0:Cart, 1:Polar): "; std::cin >> type;
@@ -183,7 +183,7 @@ bool load_point2d(std::ifstream& f, Point2D_CPP& p) {
     return true;
 }
 
-// === ЗАДАЧА 2: Гроші I/O ===
+// === TASK 2: Money I/O ===
 Money_CPP input_money_console() {
     int type;
     std::cout << "  Type (0:Full, 1:Kop): "; std::cin >> type;
@@ -206,7 +206,7 @@ bool load_money(std::ifstream& f, Money_CPP& m) {
     return true;
 }
 
-// === ЗАДАЧА 3: Вектори I/O ===
+// === TASK 3: Vectors I/O ===
 Vector_CPP input_vector_console() {
     int type; std::cout << "  Type (0:Coords, 1:Points): "; std::cin >> type;
     if(type==0) { double x,y; std::cout << "  Vx Vy: "; std::cin >> x >> y; return VectorCoords{x,y}; }
@@ -221,7 +221,7 @@ void save_vector(std::ofstream& f, const Vector_CPP& v) {
     if(v.index() == 0) {
         auto c = std::get<VectorCoords>(v); f << c.x << " " << c.y << "\n";
     } else {
-        f << "\n"; // новий рядок для краси
+        f << "\n"; // new line for aesthetics
         auto pts = std::get<VectorPoints>(v);
         save_point2d(f, pts.start);
         save_point2d(f, pts.end);
@@ -238,7 +238,7 @@ bool load_vector(std::ifstream& f, Vector_CPP& v) {
     return true;
 }
 
-// === ЗАДАЧА 4: 3D I/O ===
+// === TASK 4: 3D I/O ===
 Point3D_CPP input_point3d_console() {
     int type; std::cout << "  Type (0:Cart, 1:Polar, 2:Sphere): "; std::cin >> type;
     double a,b,c; std::cout << "  3 vals: "; std::cin >> a >> b >> c;
@@ -250,13 +250,13 @@ void save_point3d(std::ofstream& f, const Point3D_CPP& p) {
     f << p.index() << " ";
     std::visit([&](auto&& arg){ f << arg.x << " " << arg.y << " " << arg.z; },
         std::visit([](auto&& s) -> std::variant<Cart3D> {
-             // Хак: приводимо структуру до 3 double, щоб не писати if constexpr 3 рази
-             // (Припускаємо, що поля йдуть підряд у пам'яті, або просто пишемо явно)
-             // Краще явно:
-             return Cart3D{0,0,0}; // заглушка, пишемо явно нижче
+             // Hack: cast structure to 3 doubles to avoid writing if constexpr 3 times
+             // (Assume fields are contiguous in memory, or just write explicitly)
+             // Better explicitly:
+             return Cart3D{0,0,0}; // dummy, writing explicitly below
         }, p)
     );
-    // Простий варіант без магії:
+    // Simple variant without magic:
     std::visit([&](auto&& arg){
         using T = std::decay_t<decltype(arg)>;
         if constexpr (std::is_same_v<T, Cart3D>) f << arg.x << " " << arg.y << " " << arg.z;
@@ -274,7 +274,7 @@ bool load_point3d(std::ifstream& f, Point3D_CPP& p) {
     return true;
 }
 
-// === ЗАДАЧА 5: Фігури I/O ===
+// === TASK 5: Shapes I/O ===
 Shape_CPP input_shape_console() {
     int type; std::cout << "  Type (0:Circ, 1:Sq, 2:Tri, 3:Rect, 4:Trap): "; std::cin >> type;
     if(type==0) { double r; std::cin >> r; return Circle{r}; }
@@ -305,7 +305,7 @@ bool load_shape(std::ifstream& f, Shape_CPP& s) {
     return true;
 }
 
-// === ЗАДАЧА 6: Числа I/O ===
+// === TASK 6: Numbers I/O ===
 AnyNumber_CPP input_number_console() {
     int type; std::cout << "  Type (0:Int, 1:Dbl): "; std::cin >> type;
     if(type==0) { int i; std::cin >> i; return i; }
