@@ -27,3 +27,20 @@ add_executable(Task8_CrossTest
         8_Union_C/8_Union.c     # Підключаємо реалізацію Сі
         8_Union_CPP/8_Union.cpp # Підключаємо реалізацію C++
 )
+
+# --- Fast Test C ---
+add_executable(Task8_Fast_C
+        8_Union_C/8_Union_fast_test.c
+        8_Union_C/8_Union.c
+        8_Union_C/8_Union.h
+        8_Union_C/8_Union_fast_test.c
+)
+
+# --- Fast Test C++ ---
+add_executable(Task8_Fast_CPP
+        8_Union_CPP/8_Union_fast_test.cpp
+        8_Union_CPP/8_Union.cpp
+        8_Union_CPP/8_Union.h
+        8_Union_C/8_Union_fast_test.c
+        8_Union_CPP/8_Union_fast_test.cpp
+)
