@@ -4,6 +4,7 @@
 #include <variant>
 #include <string>
 #include <vector>
+#include <fstream>
 
 // --- ЗАДАЧА 1: Точки ---
 struct Cart2D { double x, y; };
@@ -51,5 +52,32 @@ struct NanType {};
 using AnyNumber_CPP = std::variant<int, double, InfType, NanType>;
 
 AnyNumber_CPP divide_numbers_CPP(const AnyNumber_CPP& n1, const AnyNumber_CPP& n2);
+
+// Функції для консольного вводу (інтерактивні)
+Point2D_CPP input_point2d_console();
+Money_CPP   input_money_console();
+Vector_CPP  input_vector_console();
+Point3D_CPP input_point3d_console();
+Shape_CPP   input_shape_console();
+AnyNumber_CPP input_number_console();
+
+// Функції для файлового I/O
+void save_point2d(std::ofstream& f, const Point2D_CPP& p);
+bool load_point2d(std::ifstream& f, Point2D_CPP& p);
+
+void save_money(std::ofstream& f, const Money_CPP& m);
+bool load_money(std::ifstream& f, Money_CPP& m);
+
+void save_vector(std::ofstream& f, const Vector_CPP& v);
+bool load_vector(std::ifstream& f, Vector_CPP& v);
+
+void save_point3d(std::ofstream& f, const Point3D_CPP& p);
+bool load_point3d(std::ifstream& f, Point3D_CPP& p);
+
+void save_shape(std::ofstream& f, const Shape_CPP& s);
+bool load_shape(std::ifstream& f, Shape_CPP& s);
+
+void save_number(std::ofstream& f, const AnyNumber_CPP& n);
+bool load_number(std::ifstream& f, AnyNumber_CPP& n);
 
 #endif // UNION_CPP_H

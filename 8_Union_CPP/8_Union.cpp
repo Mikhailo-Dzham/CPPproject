@@ -154,3 +154,174 @@ AnyNumber_CPP divide_numbers_CPP(const AnyNumber_CPP& n1, const AnyNumber_CPP& n
 
     return v1 / v2;
 }
+
+// === ЗАДАЧА 1: Точки I/O ===
+Point2D_CPP input_point2d_console() {
+    int type;
+    std::cout << "  Type (0:Cart, 1:Polar): "; std::cin >> type;
+    if (type == 0) {
+        double x, y; std::cout << "  X Y: "; std::cin >> x >> y;
+        return Cart2D{x, y};
+    } else {
+        double r, a; std::cout << "  R Angle: "; std::cin >> r >> a;
+        return Polar2D{r, a};
+    }
+}
+void save_point2d(std::ofstream& f, const Point2D_CPP& p) {
+    f << p.index() << " ";
+    std::visit([&](auto&& arg){
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, Cart2D>) f << arg.x << " " << arg.y;
+        else f << arg.r << " " << arg.angle;
+    }, p);
+    f << "\n";
+}
+bool load_point2d(std::ifstream& f, Point2D_CPP& p) {
+    int type; if (!(f >> type)) return false;
+    if (type == 0) { double x, y; f >> x >> y; p = Cart2D{x, y}; }
+    else { double r, a; f >> r >> a; p = Polar2D{r, a}; }
+    return true;
+}
+
+// === ЗАДАЧА 2: Гроші I/O ===
+Money_CPP input_money_console() {
+    int type;
+    std::cout << "  Type (0:Full, 1:Kop): "; std::cin >> type;
+    if(type==0) { int g, k; std::cout << "  Grn Kop: "; std::cin >> g >> k; return MoneyFull{g, k}; }
+    else { int k; std::cout << "  Total Kop: "; std::cin >> k; return k; }
+}
+void save_money(std::ofstream& f, const Money_CPP& m) {
+    f << m.index() << " ";
+    std::visit([&](auto&& arg){
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, MoneyFull>) f << arg.grn << " " << arg.kop;
+        else f << arg;
+    }, m);
+    f << "\n";
+}
+bool load_money(std::ifstream& f, Money_CPP& m) {
+    int type; if (!(f >> type)) return false;
+    if(type==0) { int g, k; f >> g >> k; m = MoneyFull{g,k}; }
+    else { int k; f >> k; m = k; }
+    return true;
+}
+
+// === ЗАДАЧА 3: Вектори I/O ===
+Vector_CPP input_vector_console() {
+    int type; std::cout << "  Type (0:Coords, 1:Points): "; std::cin >> type;
+    if(type==0) { double x,y; std::cout << "  Vx Vy: "; std::cin >> x >> y; return VectorCoords{x,y}; }
+    else {
+        std::cout << "  > Start:\n"; auto s = input_point2d_console();
+        std::cout << "  > End:\n";   auto e = input_point2d_console();
+        return VectorPoints{s, e};
+    }
+}
+void save_vector(std::ofstream& f, const Vector_CPP& v) {
+    f << v.index() << " ";
+    if(v.index() == 0) {
+        auto c = std::get<VectorCoords>(v); f << c.x << " " << c.y << "\n";
+    } else {
+        f << "\n"; // новий рядок для краси
+        auto pts = std::get<VectorPoints>(v);
+        save_point2d(f, pts.start);
+        save_point2d(f, pts.end);
+    }
+}
+bool load_vector(std::ifstream& f, Vector_CPP& v) {
+    int type; if(!(f >> type)) return false;
+    if(type==0) { double x,y; f >> x >> y; v = VectorCoords{x,y}; }
+    else {
+        Point2D_CPP s, e;
+        if(!load_point2d(f, s) || !load_point2d(f, e)) return false;
+        v = VectorPoints{s, e};
+    }
+    return true;
+}
+
+// === ЗАДАЧА 4: 3D I/O ===
+Point3D_CPP input_point3d_console() {
+    int type; std::cout << "  Type (0:Cart, 1:Polar, 2:Sphere): "; std::cin >> type;
+    double a,b,c; std::cout << "  3 vals: "; std::cin >> a >> b >> c;
+    if(type==0) return Cart3D{a,b,c};
+    if(type==1) return Polar3D{a,b,c};
+    return Sphere3D{a,b,c};
+}
+void save_point3d(std::ofstream& f, const Point3D_CPP& p) {
+    f << p.index() << " ";
+    std::visit([&](auto&& arg){ f << arg.x << " " << arg.y << " " << arg.z; },
+        std::visit([](auto&& s) -> std::variant<Cart3D> {
+             // Хак: приводимо структуру до 3 double, щоб не писати if constexpr 3 рази
+             // (Припускаємо, що поля йдуть підряд у пам'яті, або просто пишемо явно)
+             // Краще явно:
+             return Cart3D{0,0,0}; // заглушка, пишемо явно нижче
+        }, p)
+    );
+    // Простий варіант без магії:
+    std::visit([&](auto&& arg){
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, Cart3D>) f << arg.x << " " << arg.y << " " << arg.z;
+        else if constexpr (std::is_same_v<T, Polar3D>) f << arg.r << " " << arg.angle << " " << arg.z;
+        else f << arg.r << " " << arg.theta << " " << arg.phi;
+    }, p);
+    f << "\n";
+}
+bool load_point3d(std::ifstream& f, Point3D_CPP& p) {
+    int type; double a,b,c;
+    if(!(f >> type >> a >> b >> c)) return false;
+    if(type==0) p=Cart3D{a,b,c};
+    else if(type==1) p=Polar3D{a,b,c};
+    else p=Sphere3D{a,b,c};
+    return true;
+}
+
+// === ЗАДАЧА 5: Фігури I/O ===
+Shape_CPP input_shape_console() {
+    int type; std::cout << "  Type (0:Circ, 1:Sq, 2:Tri, 3:Rect, 4:Trap): "; std::cin >> type;
+    if(type==0) { double r; std::cin >> r; return Circle{r}; }
+    if(type==1) { double s; std::cin >> s; return Square{s}; }
+    if(type==2) { double a,b,c; std::cin >> a >> b >> c; return Triangle{a,b,c}; }
+    if(type==3) { double a,b; std::cin >> a >> b; return Rect{a,b}; }
+    double a,b,h; std::cin >> a >> b >> h; return Trapezoid{a,b,h};
+}
+void save_shape(std::ofstream& f, const Shape_CPP& s) {
+    f << s.index() << " ";
+    std::visit([&](auto&& arg){
+        using T = std::decay_t<decltype(arg)>;
+        if constexpr (std::is_same_v<T, Circle>) f << arg.r;
+        else if constexpr (std::is_same_v<T, Square>) f << arg.side;
+        else if constexpr (std::is_same_v<T, Triangle>) f << arg.a << " " << arg.b << " " << arg.c;
+        else if constexpr (std::is_same_v<T, Rect>) f << arg.a << " " << arg.b;
+        else f << arg.a << " " << arg.b << " " << arg.h;
+    }, s);
+    f << "\n";
+}
+bool load_shape(std::ifstream& f, Shape_CPP& s) {
+    int type; if(!(f >> type)) return false;
+    if(type==0) { double r; f>>r; s=Circle{r}; }
+    else if(type==1) { double x; f>>x; s=Square{x}; }
+    else if(type==2) { double a,b,c; f>>a>>b>>c; s=Triangle{a,b,c}; }
+    else if(type==3) { double a,b; f>>a>>b; s=Rect{a,b}; }
+    else { double a,b,h; f>>a>>b>>h; s=Trapezoid{a,b,h}; }
+    return true;
+}
+
+// === ЗАДАЧА 6: Числа I/O ===
+AnyNumber_CPP input_number_console() {
+    int type; std::cout << "  Type (0:Int, 1:Dbl): "; std::cin >> type;
+    if(type==0) { int i; std::cin >> i; return i; }
+    else { double d; std::cin >> d; return d; }
+}
+void save_number(std::ofstream& f, const AnyNumber_CPP& n) {
+    f << n.index() << " ";
+    if(std::holds_alternative<int>(n)) f << std::get<int>(n);
+    else if(std::holds_alternative<double>(n)) f << std::get<double>(n);
+    else f << "0";
+    f << "\n";
+}
+bool load_number(std::ifstream& f, AnyNumber_CPP& n) {
+    int type; if(!(f >> type)) return false;
+    if(type==0) { int i; f>>i; n=i; }
+    else if(type==1) { double d; f>>d; n=d; }
+    else { int dum; f>>dum; if(type==2) n=InfType{}; else n=NanType{}; }
+    return true;
+}
