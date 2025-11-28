@@ -6,33 +6,33 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-// --- Допоміжна функція (не видно ззовні) ---
-// Перетворює будь-яку точку в структуру {x, y}
+// --- Auxiliary function (not visible externally) ---
+// Converts any point to structure {x, y}
 static void to_cartesian(Point2D p, double *x, double *y) {
     if (p.type == COORD_CARTESIAN) {
         *x = p.data.cart.x;
         *y = p.data.cart.y;
     } else {
-        // Переведення з полярної в декартову
+        // Conversion from polar to Cartesian
         *x = p.data.polar.r * cos(p.data.polar.angle);
         *y = p.data.polar.r * sin(p.data.polar.angle);
     }
 }
 
 // ==========================
-// ЗАДАЧА 1: Точки
+// TASK 1: Points
 // ==========================
 double calculate_segment_length_C(Point2D p1, Point2D p2) {
     double x1, y1, x2, y2;
     to_cartesian(p1, &x1, &y1);
     to_cartesian(p2, &x2, &y2);
 
-    // Формула відстані: sqrt((x2-x1)^2 + (y2-y1)^2)
+    // Distance formula: sqrt((x2-x1)^2 + (y2-y1)^2)
     return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
 }
 
 void save_point2d(FILE *f, Point2D p) {
-    fprintf(f, "%d ", p.type); // 1. Пишемо тип
+    fprintf(f, "%d ", p.type); // 1. Write type
     if (p.type == COORD_CARTESIAN) {
         fprintf(f, "%lf %lf\n", p.data.cart.x, p.data.cart.y);
     } else {
@@ -42,7 +42,7 @@ void save_point2d(FILE *f, Point2D p) {
 
 int load_point2d(FILE *f, Point2D *p) {
     int type_int;
-    if (fscanf(f, "%d", &type_int) != 1) return 0; // Помилка читання
+    if (fscanf(f, "%d", &type_int) != 1) return 0; // Read error
 
     p->type = (Point2DType)type_int;
     if (p->type == COORD_CARTESIAN) {
@@ -54,7 +54,7 @@ int load_point2d(FILE *f, Point2D *p) {
 }
 
 // ==========================
-// ЗАДАЧА 5: Фігури
+// TASK 5: Shapes
 // ==========================
 double calculate_perimeter_C(Shape s) {
     switch (s.type) {
@@ -67,9 +67,9 @@ double calculate_perimeter_C(Shape s) {
         case SHAPE_RECT:
             return 2 * (s.data.rect_sides.a + s.data.rect_sides.b);
         case SHAPE_TRAPEZOID:
-            // Для периметра трапеції треба знати 4 сторони,
-            // але в умові часто дають основи і висоту.
-            // Якщо маємо тільки a, b, h, то бічні сторони вважаємо рівнобічними (спрощення)
+            // To calculate trapezoid perimeter we need 4 sides,
+            // but often the condition gives bases and height.
+            // If we only have a, b, h, we assume lateral sides are isosceles (simplification)
             // c^2 = h^2 + ((b-a)/2)^2
             {
                 double a = s.data.trapezoid_dims.a;
@@ -92,7 +92,7 @@ double calculate_area_C(Shape s) {
             return pow(s.data.square_side, 2);
         case SHAPE_TRIANGLE:
             {
-                // Формула Герона
+                // Heron's formula
                 double a = s.data.triangle_sides.a;
                 double b = s.data.triangle_sides.b;
                 double c = s.data.triangle_sides.c;
@@ -135,13 +135,13 @@ int load_shape(FILE *f, Shape *s) {
 }
 
 // ==========================
-// ЗАДАЧА 2: Гроші
+// TASK 2: Money
 // ==========================
 void print_money_C(Money m) {
     if (m.type == MONEY_FULL) {
         printf("%d UAH %02d kop\n", m.data.full.grn, m.data.full.kop);
     } else {
-        // Конвертація копійок у гривні при виводі
+        // Converting kopecks to hryvnias during output
         int grn = m.data.only_kop / 100;
         int kop = m.data.only_kop % 100;
         printf("%d UAH %02d kop (from %d total)\n", grn, kop, m.data.only_kop);
@@ -171,18 +171,18 @@ int load_money(FILE *f, Money *m) {
 }
 
 // ==========================
-// ЗАДАЧА 3: Вектори
+// TASK 3: Vectors
 // ==========================
-// Допоміжна: отримати X та Y вектора
+// Auxiliary: get X and Y of vector
 static void get_vector_components(Vector v, double *vx, double *vy) {
     if (v.type == VECTOR_COORDS) {
         *vx = v.data.coord.x;
         *vy = v.data.coord.y;
     } else {
-        // Треба вирахувати координати з двох точок (End - Start)
-        // Використовуємо функцію to_cartesian з Задачі 1 (вона має бути вище у файлі)
-        // Оскільки to_cartesian static, ми можемо її викликати тут
-        // Але! В C "static" функції видно тільки в цьому файлі.
+        // Need to calculate coordinates from two points (End - Start)
+        // Using to_cartesian function from Task 1 (it higher)
+        // Since to_cartesian is static, we can call it here
+        // But! In C, "static" functions are visible only in this file.
 
         double x1, y1, x2, y2;
 
@@ -210,8 +210,8 @@ static void get_vector_components(Vector v, double *vx, double *vy) {
 }
 
 int are_collinear_C(Vector v1, Vector v2, Vector v3) {
-    // Вектори колінеарні, якщо їхній векторний добуток (determinant 2x2) дорівнює 0.
-    // Перевіряємо попарно: v1 || v2 AND v2 || v3
+    // Vectors are collinear if their cross product (determinant 2x2) equals 0.
+    // Check pairwise: v1 || v2 AND v2 || v3
     double x1, y1, x2, y2, x3, y3;
     get_vector_components(v1, &x1, &y1);
     get_vector_components(v2, &x2, &y2);
@@ -220,7 +220,7 @@ int are_collinear_C(Vector v1, Vector v2, Vector v3) {
     double det12 = x1 * y2 - x2 * y1;
     double det23 = x2 * y3 - x3 * y2;
 
-    // Використовуємо малий epsilon для порівняння double
+    // Using small epsilon for double comparison
     double eps = 1e-9;
     return (fabs(det12) < eps) && (fabs(det23) < eps);
 }
@@ -230,7 +230,7 @@ void save_vector(FILE *f, Vector v) {
     if (v.type == VECTOR_COORDS) {
         fprintf(f, "%lf %lf\n", v.data.coord.x, v.data.coord.y);
     } else {
-        // Тут хитро: вектор зберігає дві точки. Рекурсивно викликаємо save_point2d
+        // Tricky here: vector stores two points. Recursively calling save_point2d
         save_point2d(f, v.data.pts.start);
         save_point2d(f, v.data.pts.end);
     }
@@ -251,14 +251,14 @@ int load_vector(FILE *f, Vector *v) {
 }
 
 // ==========================
-// ЗАДАЧА 4: Точки 3D
+// TASK 4: 3D Points
 // ==========================
 static void to_cartesian_3d(Point3D p, double *x, double *y, double *z) {
     switch (p.type) {
         case SPACE_CART:
             *x = p.data.cart.x; *y = p.data.cart.y; *z = p.data.cart.z;
             break;
-        case SPACE_POLAR: // Циліндричні
+        case SPACE_POLAR: // Cylindrical
             *x = p.data.polar.r * cos(p.data.polar.angle);
             *y = p.data.polar.r * sin(p.data.polar.angle);
             *z = p.data.polar.z;
@@ -304,28 +304,28 @@ int load_point3d(FILE *f, Point3D *p) {
 }
 
 // ==========================
-// ЗАДАЧА 6: Числа (Ділення)
+// TASK 6: Numbers (Division)
 // ==========================
 AnyNumber divide_numbers_C(AnyNumber n1, AnyNumber n2) {
     AnyNumber res;
     double val1 = 0, val2 = 0;
 
-    // 1. Перевірка на валідність вхідних даних
+    // 1. Input data validity check
     if (n1.type >= NUM_STRING_INF || n2.type >= NUM_STRING_INF) {
-        res.type = NUM_STRING_NAN; // Операції з нечислами дають NaN
+        res.type = NUM_STRING_NAN; // Operations with non-numbers result in NaN
         return res;
     }
 
-    // 2. Отримання значень
+    // 2. Getting values
     if (n1.type == NUM_INT) val1 = (double)n1.data.i_val;
     else val1 = n1.data.d_val;
 
     if (n2.type == NUM_INT) val2 = (double)n2.data.i_val;
     else val2 = n2.data.d_val;
 
-    // 3. Ділення
+    // 3. Division
     if (fabs(val2) < 1e-9) {
-        res.type = NUM_STRING_INF; // Ділення на 0
+        res.type = NUM_STRING_INF; // Division by 0
     } else {
         res.type = NUM_DOUBLE;
         res.data.d_val = val1 / val2;
@@ -337,7 +337,7 @@ void save_number(FILE *f, AnyNumber n) {
     fprintf(f, "%d ", n.type);
     if (n.type == NUM_INT) fprintf(f, "%d\n", n.data.i_val);
     else if (n.type == NUM_DOUBLE) fprintf(f, "%lf\n", n.data.d_val);
-    else fprintf(f, "0\n"); // Для INF/NAN записуємо пустишку
+    else fprintf(f, "0\n"); // Write dummy for INF/NAN
 }
 
 int load_number(FILE *f, AnyNumber *n) {
@@ -347,10 +347,10 @@ int load_number(FILE *f, AnyNumber *n) {
 
     if (n->type == NUM_INT) return fscanf(f, "%d", &n->data.i_val) == 1;
     else if (n->type == NUM_DOUBLE) return fscanf(f, "%lf", &n->data.d_val) == 1;
-    else { int dummy; fscanf(f, "%d", &dummy); return 1; } // Пропускаємо пустишку
+    else { int dummy; fscanf(f, "%d", &dummy); return 1; } // Skip dummy
 }
 
-// === ІНТЕРАКТИВНИЙ ВВІД ===
+// === INTERACTIVE INPUT ===
 
 Point2D input_point2d_console() {
     Point2D p;

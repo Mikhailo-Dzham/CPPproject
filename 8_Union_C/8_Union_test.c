@@ -4,7 +4,7 @@
 #include "8_Union.h"
 
 // --- Helper Functions ---
-// Отримує потік виводу (екран або файл)
+// Gets output stream (screen or file)
 FILE* get_output_stream(char *filename_buffer) {
     int choice;
     printf("\n[OUTPUT] Select destination:\n1. Console\n2. File\n> ");
@@ -19,7 +19,7 @@ FILE* get_output_stream(char *filename_buffer) {
     return stdout;
 }
 
-// Функція для відкриття файлу на читання (якщо обрано)
+// Function to open file for reading (if selected)
 FILE* get_input_file() {
     char filename[100];
     printf("Enter input filename: ");
@@ -73,8 +73,8 @@ void run_task_2() {
         fclose(f);
     }
 
-    // Для грошей у нас вивід специфічний, просто покажемо на екран
-    // Або запишемо в файл
+    // For money we have specific output, just show on screen
+    // Or write to file
     char fname[100];
     FILE *out = get_output_stream(fname);
     if (out == stdout) {

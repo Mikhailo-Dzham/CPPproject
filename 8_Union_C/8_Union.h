@@ -1,14 +1,14 @@
 #ifndef UNION_C_H
 #define UNION_C_H
 
-#include <stdio.h> // Потрібно для FILE*
+#include <stdio.h> // Needed for FILE*
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 // ==========================
-// 1. Точка 2D
+// 1. Point 2D
 // ==========================
 typedef enum { COORD_CARTESIAN, COORD_POLAR } Point2DType;
 typedef struct {
@@ -20,13 +20,13 @@ typedef struct {
 } Point2D;
 
 double calculate_segment_length_C(Point2D p1, Point2D p2);
-// Файлові операції
+// File operations
 void save_point2d(FILE *f, Point2D p);
-int load_point2d(FILE *f, Point2D *p); // Повертає 1 якщо успішно, 0 якщо ні
+int load_point2d(FILE *f, Point2D *p); // Returns 1 on success, 0 on failure
 
 
 // ==========================
-// 2. Гроші
+// 2. Money
 // ==========================
 typedef enum { MONEY_FULL, MONEY_KOP } MoneyType;
 typedef struct {
@@ -43,7 +43,7 @@ int load_money(FILE *f, Money *m);
 
 
 // ==========================
-// 3. Вектор
+// 3. Vector
 // ==========================
 typedef enum { VECTOR_COORDS, VECTOR_POINTS } VectorType;
 typedef struct {
@@ -60,7 +60,7 @@ int load_vector(FILE *f, Vector *v);
 
 
 // ==========================
-// 4. Точка 3D
+// 4. Point 3D
 // ==========================
 typedef enum { SPACE_CART, SPACE_POLAR, SPACE_SPHERICAL } SpaceType;
 typedef struct {
@@ -78,7 +78,7 @@ int load_point3d(FILE *f, Point3D *p);
 
 
 // ==========================
-// 5. Фігура
+// 5. Shape
 // ==========================
 typedef enum { SHAPE_CIRCLE, SHAPE_SQUARE, SHAPE_TRIANGLE, SHAPE_RECT, SHAPE_TRAPEZOID } ShapeType;
 typedef struct {
@@ -99,7 +99,7 @@ int load_shape(FILE *f, Shape *s);
 
 
 // ==========================
-// 6. Число
+// 6. Number
 // ==========================
 typedef enum { NUM_INT, NUM_DOUBLE, NUM_STRING_INF, NUM_STRING_NAN } AnyNumType;
 typedef struct {
@@ -115,7 +115,7 @@ AnyNumber divide_numbers_C(AnyNumber n1, AnyNumber n2);
 void save_number(FILE *f, AnyNumber n);
 int load_number(FILE *f, AnyNumber *n);
 
-// --- Додаємо нові прототипи для консольного вводу ---
+// --- Adding new prototypes for console input ---
 Point2D input_point2d_console();
 Money   input_money_console();
 Vector  input_vector_console();

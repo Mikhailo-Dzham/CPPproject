@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "8_Union.h"
 
-// Структура для опису одного тест-кейсу
+// Structure to describe a single test case
 typedef struct {
     int task_id;
     const char* input_file;
@@ -12,7 +12,7 @@ typedef struct {
 
 void run_test_case(TestCase tc) {
     printf("[RUNNING] %s (Task %d)...\n", tc.description, tc.task_id);
-    
+
     FILE *in = fopen(tc.input_file, "r");
     if (!in) {
         printf("  [ERROR] Cannot open input file: %s\n", tc.input_file);
@@ -26,7 +26,7 @@ void run_test_case(TestCase tc) {
         return;
     }
 
-    // Логіка обробки залежно від задачі
+    // Processing logic depending on the task
     switch(tc.task_id) {
         case 1: { // Points
             Point2D p1, p2;
@@ -94,7 +94,7 @@ void run_test_case(TestCase tc) {
 }
 
 int main() {
-    // Список усіх тестів, які треба прогнати
+    // List of all tests to run
     TestCase tests[] = {
         {1, "test_t1_mixed.txt", "res_t1.txt", "Task 1: Mixed Coordinates"},
         {2, "test_t2_full.txt",  "res_t2a.txt", "Task 2: Full Money"},
