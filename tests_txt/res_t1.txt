@@ -1,0 +1,2 @@
+Input: test_t1_mixed.txt
+Result Distance: 5.0000
