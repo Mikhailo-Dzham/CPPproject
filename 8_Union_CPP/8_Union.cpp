@@ -156,7 +156,7 @@ AnyNumber_CPP divide_numbers_CPP(const AnyNumber_CPP& n1, const AnyNumber_CPP& n
 }
 
 // === TASK 1: Points I/O ===
-Point2D_CPP input_point2d_console() {
+Point2D_CPP input_point2d_console_CPP() {
     int type;
     std::cout << "  Type (0:Cart, 1:Polar): "; std::cin >> type;
     if (type == 0) {
@@ -184,7 +184,7 @@ bool load_point2d(std::ifstream& f, Point2D_CPP& p) {
 }
 
 // === TASK 2: Money I/O ===
-Money_CPP input_money_console() {
+Money_CPP input_money_console_CPP() {
     int type;
     std::cout << "  Type (0:Full, 1:Kop): "; std::cin >> type;
     if(type==0) { int g, k; std::cout << "  Grn Kop: "; std::cin >> g >> k; return MoneyFull{g, k}; }
@@ -207,12 +207,12 @@ bool load_money(std::ifstream& f, Money_CPP& m) {
 }
 
 // === TASK 3: Vectors I/O ===
-Vector_CPP input_vector_console() {
+Vector_CPP input_vector_console_CPP() {
     int type; std::cout << "  Type (0:Coords, 1:Points): "; std::cin >> type;
     if(type==0) { double x,y; std::cout << "  Vx Vy: "; std::cin >> x >> y; return VectorCoords{x,y}; }
     else {
-        std::cout << "  > Start:\n"; auto s = input_point2d_console();
-        std::cout << "  > End:\n";   auto e = input_point2d_console();
+        std::cout << "  > Start:\n"; auto s = input_point2d_console_CPP();
+        std::cout << "  > End:\n";   auto e = input_point2d_console_CPP();
         return VectorPoints{s, e};
     }
 }
@@ -239,7 +239,7 @@ bool load_vector(std::ifstream& f, Vector_CPP& v) {
 }
 
 // === TASK 4: 3D I/O ===
-Point3D_CPP input_point3d_console() {
+Point3D_CPP input_point3d_console_CPP() {
     int type; std::cout << "  Type (0:Cart, 1:Polar, 2:Sphere): "; std::cin >> type;
     double a,b,c; std::cout << "  3 vals: "; std::cin >> a >> b >> c;
     if(type==0) return Cart3D{a,b,c};
@@ -275,7 +275,7 @@ bool load_point3d(std::ifstream& f, Point3D_CPP& p) {
 }
 
 // === TASK 5: Shapes I/O ===
-Shape_CPP input_shape_console() {
+Shape_CPP input_shape_console_CPP() {
     int type; std::cout << "  Type (0:Circ, 1:Sq, 2:Tri, 3:Rect, 4:Trap): "; std::cin >> type;
     if(type==0) { double r; std::cin >> r; return Circle{r}; }
     if(type==1) { double s; std::cin >> s; return Square{s}; }
@@ -306,7 +306,7 @@ bool load_shape(std::ifstream& f, Shape_CPP& s) {
 }
 
 // === TASK 6: Numbers I/O ===
-AnyNumber_CPP input_number_console() {
+AnyNumber_CPP input_number_console_CPP() {
     int type; std::cout << "  Type (0:Int, 1:Dbl): "; std::cin >> type;
     if(type==0) { int i; std::cin >> i; return i; }
     else { double d; std::cin >> d; return d; }

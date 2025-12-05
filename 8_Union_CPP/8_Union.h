@@ -54,12 +54,12 @@ using AnyNumber_CPP = std::variant<int, double, InfType, NanType>;
 AnyNumber_CPP divide_numbers_CPP(const AnyNumber_CPP& n1, const AnyNumber_CPP& n2);
 
 // Functions for console input (interactive)
-Point2D_CPP input_point2d_console();
-Money_CPP   input_money_console();
-Vector_CPP  input_vector_console();
-Point3D_CPP input_point3d_console();
-Shape_CPP   input_shape_console();
-AnyNumber_CPP input_number_console();
+Point2D_CPP input_point2d_console_CPP();
+Money_CPP   input_money_console_CPP();
+Vector_CPP  input_vector_console_CPP();
+Point3D_CPP input_point3d_console_CPP();
+Shape_CPP   input_shape_console_CPP();
+AnyNumber_CPP input_number_console_CPP();
 
 // Functions for file I/O
 void save_point2d(std::ofstream& f, const Point2D_CPP& p);

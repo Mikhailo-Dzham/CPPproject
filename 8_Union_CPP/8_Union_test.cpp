@@ -68,8 +68,8 @@ void run_task_1() {
     std::cin >> choice;
 
     if (choice == 1) {
-        std::cout << "Point 1:\n"; p1 = input_point2d_console();
-        std::cout << "Point 2:\n"; p2 = input_point2d_console();
+        std::cout << "Point 1:\n"; p1 = input_point2d_console_CPP();
+        std::cout << "Point 2:\n"; p2 = input_point2d_console_CPP();
     } else {
         auto f = get_input_file();
         if (!f.is_open()) return;
@@ -92,7 +92,7 @@ void run_task_2() {
     std::cout << "[INPUT] 1. Console  2. File\n> ";
     std::cin >> choice;
 
-    if (choice == 1) m = input_money_console();
+    if (choice == 1) m = input_money_console_CPP();
     else {
         auto f = get_input_file();
         if (!f.is_open()) return;
@@ -120,8 +120,8 @@ void run_task_3() {
     std::cin >> choice;
 
     if (choice == 1) {
-        std::cout << "Vector 1:\n"; v1 = input_vector_console();
-        std::cout << "Vector 2:\n"; v2 = input_vector_console();
+        std::cout << "Vector 1:\n"; v1 = input_vector_console_CPP();
+        std::cout << "Vector 2:\n"; v2 = input_vector_console_CPP();
     } else {
         auto f = get_input_file();
         if (!f.is_open()) return;
@@ -143,8 +143,8 @@ void run_task_4() {
     std::cin >> choice;
 
     if (choice == 1) {
-        std::cout << "Point 1:\n"; p1 = input_point3d_console();
-        std::cout << "Point 2:\n"; p2 = input_point3d_console();
+        std::cout << "Point 1:\n"; p1 = input_point3d_console_CPP();
+        std::cout << "Point 2:\n"; p2 = input_point3d_console_CPP();
     } else {
         auto f = get_input_file();
         if (!f.is_open()) return;
@@ -165,7 +165,7 @@ void run_task_5() {
     std::cout << "[INPUT] 1. Console  2. File\n> ";
     std::cin >> choice;
 
-    if (choice == 1) s = input_shape_console();
+    if (choice == 1) s = input_shape_console_CPP();
     else {
         auto f = get_input_file();
         if (!f.is_open()) return;
@@ -189,8 +189,8 @@ void run_task_6() {
     std::cin >> choice;
 
     if (choice == 1) {
-        std::cout << "Numerator:\n";   n1 = input_number_console();
-        std::cout << "Denominator:\n"; n2 = input_number_console();
+        std::cout << "Numerator:\n";   n1 = input_number_console_CPP();
+        std::cout << "Denominator:\n"; n2 = input_number_console_CPP();
     } else {
         auto f = get_input_file();
         if (!f.is_open()) return;
